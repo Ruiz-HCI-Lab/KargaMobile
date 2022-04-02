@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">KargaMobile</string>
+    <string name="karga">Karga</string>
+    <string name="mobile">Mobile</string>
+    <string name="by">by</string>
+    <string name="new_scan_match">New Gene Identification</string>
+    <string name="scan_match">Identify Genes</string>
+    <string name="configurations">Configurations</string>
+    <string name="ruizlab_logo">RuizLab Logo</string>
+    <string name="source_header">Sequence Reads [fastq]</string>
+    <string name="select_source_data">Select Sequence File</string>
+    <string name="source_file">...</string>
+    <string name="database_header">Reference [fasta]</string>
+    <string name="stop">Stop Process</string>
+    <string name="select_database_data">Select Reference File</string>
+    <string name="database_file">...</string>
+    <string name="show_results">Show Results</string>
+    <string name="kvalue_header">Select K Value</string>
+    <string name="back">Back</string>
+    <string name="slider_desc">Select Gene Coverage Threshold</string>
+    <string name="greaterthanstring"><![CDATA[>]]></string>
+    <string name="identifygenestext">IDENTIFY GENES</string>
+    slider_desc
+
+</resources>
