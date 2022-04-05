@@ -32,6 +32,8 @@ import android.widget.Toast;
 
 import java.util.Objects;
 
+import android.app.Application;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -119,13 +121,14 @@ public class MainActivity extends AppCompatActivity {
         WorkManager workManager = WorkManager.getInstance(getApplicationContext());
 
         if (boolScanButton){
-            Data myParameter = new Data.Builder()
-                    .putString(Mapper.KEY_URI,sourceFileUri.toString())
+            Data myParameters = new Data.Builder()
+                    .putString(Mapper.KEY_SOURCE,sourceFileUri.toString())
+                    .putString(Mapper.KEY_DATA,dataBaseFileUri.toString())
                     .build();
 
             try {
                 mapperWorkRequest = new OneTimeWorkRequest.Builder(Mapper.class)
-                                        .setInputData(myParameter)
+                                        .setInputData(myParameters)
                                         .build();
                 workManager.enqueue(mapperWorkRequest);
                 pbMatchProgress.setVisibility(View.VISIBLE);

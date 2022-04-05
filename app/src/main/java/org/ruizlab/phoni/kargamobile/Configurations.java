@@ -13,10 +13,11 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.NumberPicker;
 
+import java.util.Objects;
+
 public class Configurations extends AppCompatActivity {
 
     private NumberPicker npKValue;
-    private Button bBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,16 +27,14 @@ public class Configurations extends AppCompatActivity {
         int kValue = ((GlobalVariables)this.getApplication()).getKValue();
 
         npKValue = findViewById(R.id.npKValue);
-        bBack = findViewById(R.id.bBack);
+        Button bBack = findViewById(R.id.bBack);
 
         npKValue.setMinValue(11);
         npKValue.setMaxValue(41);
 
         npKValue.setValue(kValue);
 
-        npKValue.setOnValueChangedListener((numberPicker, i, i1) -> {
-            ((GlobalVariables)this.getApplication()).setKValue(npKValue.getValue());
-        });
+        npKValue.setOnValueChangedListener((numberPicker, i, i1) -> ((GlobalVariables)this.getApplication()).setKValue(npKValue.getValue()));
 
         bBack.setOnClickListener(
                 v -> {
@@ -44,6 +43,6 @@ public class Configurations extends AppCompatActivity {
                 }
         );
 
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
     }
 }

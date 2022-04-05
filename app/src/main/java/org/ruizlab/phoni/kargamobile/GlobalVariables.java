@@ -9,7 +9,8 @@ package org.ruizlab.phoni.kargamobile;
 import android.app.Application;
 
 public class GlobalVariables extends Application {
-    //Default kValue = 17
+
+    //Default value of k is set to 17
     private int kValue = 17;
 
     public int getKValue() {

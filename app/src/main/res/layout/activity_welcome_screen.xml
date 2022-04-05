@@ -10,7 +10,7 @@
 
     <Button
         android:id="@+id/bNewScanMatch"
-        android:layout_width="205dp"
+        android:layout_width="225dp"
         android:layout_height="84dp"
         android:layout_marginStart="78dp"
         android:layout_marginTop="278dp"
