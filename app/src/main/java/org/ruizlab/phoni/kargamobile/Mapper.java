@@ -455,21 +455,4 @@ public class Mapper extends Worker{
         Float f2 = e2.getValue();
         return f2.compareTo(f1);
     };
-
-    /**
-     * Deprecated method that extracts the string from the MEGARES file in the assets folder of our app.
-     * This method is deprecated because user now selects the file through the picker. It is left here for testing and future reference.
-     * @return BufferedReader of the MEGARES file
-     */
-    public BufferedReader returnBufferedReaderFromMEGARES() throws IOException{
-        AssetManager am = getApplicationContext().getAssets();
-        InputStream is = am.open("Megares.fasta");
-        //Should be moved to global
-        final int DEFAULT_BUFFER_SIZE=16384;
-
-        return new BufferedReader(new InputStreamReader(is), DEFAULT_BUFFER_SIZE);
     }
-
-
-
-}

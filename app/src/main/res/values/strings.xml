@@ -20,6 +20,8 @@
     <string name="slider_desc">Select Gene Coverage Threshold</string>
     <string name="greaterthanstring"><![CDATA[>]]></string>
     <string name="identifygenestext">IDENTIFY GENES</string>
+    <string name="coverage_threshold">Select Coverage Threshold</string>
+
     slider_desc
 
 </resources>
