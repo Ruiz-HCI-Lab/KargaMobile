@@ -13,12 +13,19 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.material.slider.Slider;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class Results extends AppCompatActivity implements GeneListAdapter.ItemClickListener{
 
     GeneListAdapter adapter;
+    Slider coverageSlider;
+    Float coverageValue;
+    HashMap<String,Integer> classMap;
+    ArrayList<String> finalGeneList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,24 +34,55 @@ public class Results extends AppCompatActivity implements GeneListAdapter.ItemCl
 
         getSupportActionBar().hide();
 
-        // data to populate the RecyclerView with
-        ArrayList<String> geneList = new ArrayList<>();
-        geneList.add(">MEG_1000|Drugs|Aminoglycosides|Aminoglycoside_O-nucleotidyltransferases|ANT6");
-        geneList.add(">MEG_1002|Drugs|Aminoglycosides|Aminoglycoside_O-nucleotidyltransferases|ANT6");
-        geneList.add(">MEG_1003|Drugs|Aminoglycosides|Aminoglycoside_O-nucleotidyltransferases|ANT9");
-        geneList.add(">MEG_2419|Drugs|betalactams|Class_A_betalactamases|CTX");
-        geneList.add(">MEG_6447|Drugs|betalactams|Class_A_betalactamases|SHV");
-
         // set up the RecyclerView
         RecyclerView recyclerView = findViewById(R.id.rvGeneList);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new GeneListAdapter(this, geneList);
+
+        finalGeneList = ((Global)this.getApplicationContext()).getFinalGeneList();
+
+        adapter = new GeneListAdapter(this, finalGeneList);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
+
+        classMap = new HashMap<>();
+        this.setClassMap();
+
+        coverageSlider = findViewById(R.id.sSlider);
+        coverageSlider.setVisibility(View.INVISIBLE);
+
+        /* Work in process:
+        Add a coverage map to the geneList so we can update what genes to be shown in the list
+        coverageSlider.setValue(((Global)this.getApplicationContext()).getCoverageValue());
+
+        String coverageValue[] = geneData[1].split("%",2);
+        this.mCoverage.put(position,Float.parseFloat(coverageValue[0]));
+
+
+        coverageSlider.addOnChangeListener((coverageSlider, value, fromUser) -> {
+
+            adapter.notifyDataSetChanged();
+        });
+        */
+
     }
 
     @Override
     public void onItemClick(View view, int position) {
         Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
     }
+
+    public void setClassMap() {
+        finalGeneList.forEach((n)-> {
+            String[] geneData, geneId;
+            String geneKey;
+
+            geneData = n.split(",",3);
+            geneId = geneData[0].split("\\|",5);
+            geneKey = geneId[2];
+
+            classMap.merge(geneKey, 1, Integer::sum);
+        });
+    }
+
 }

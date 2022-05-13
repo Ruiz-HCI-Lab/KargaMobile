@@ -15,13 +15,12 @@
     <string name="select_database_data">Select Reference File</string>
     <string name="database_file">...</string>
     <string name="show_results">Show Results</string>
-    <string name="kvalue_header">Select K Value</string>
+    <string name="k_value_header">Select K Value</string>
     <string name="back">Back</string>
     <string name="slider_desc">Select Gene Coverage Threshold</string>
-    <string name="greaterthanstring"><![CDATA[>]]></string>
-    <string name="identifygenestext">IDENTIFY GENES</string>
+    <string name="greater_than_string"><![CDATA[>]]></string>
+    <string name="identify_genes_text">IDENTIFY GENES</string>
+    <string name="gene_id_title">Gene Id: </string>
+    <string name="coverage_percent_title">Coverage: </string>
     <string name="coverage_threshold">Select Coverage Threshold</string>
-
-    slider_desc
-
 </resources>

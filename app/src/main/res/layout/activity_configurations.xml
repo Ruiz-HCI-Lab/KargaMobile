@@ -25,7 +25,7 @@
             android:id="@+id/tvKValue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/kvalue_header"
+            android:text="@string/k_value_header"
             android:textColor="#FA4616"
             android:textSize="20sp"
             android:textStyle="bold" />

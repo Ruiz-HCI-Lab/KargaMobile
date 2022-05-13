@@ -24,7 +24,7 @@ public class Configurations extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configurations);
 
-        int kValue = ((GlobalVariables)this.getApplication()).getKValue();
+        int kValue = ((Global)this.getApplication()).getKValue();
 
         npKValue = findViewById(R.id.npKValue);
         Button bBack = findViewById(R.id.bBack);
@@ -34,7 +34,7 @@ public class Configurations extends AppCompatActivity {
 
         npKValue.setValue(kValue);
 
-        npKValue.setOnValueChangedListener((numberPicker, i, i1) -> ((GlobalVariables)this.getApplication()).setKValue(npKValue.getValue()));
+        npKValue.setOnValueChangedListener((numberPicker, i, i1) -> ((Global)this.getApplication()).setKValue(npKValue.getValue()));
 
         bBack.setOnClickListener(
                 v -> {

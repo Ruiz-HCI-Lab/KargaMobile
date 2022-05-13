@@ -6,8 +6,11 @@
 // -----------------------------------------------------------------------
 package org.ruizlab.phoni.kargamobile;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.OpenableColumns;
 
 import androidx.annotation.*;
 import androidx.work.*;
@@ -21,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -71,18 +73,19 @@ public class Mapper extends Worker{
     @Override
     public void onStopped() {
 
-        // Something must be added here so that work actually stops when the button is hit
+        // TBD: Something must be added here so that work actually stops when the button is hit
         super.onStopped();
 
     }
 
     /*All following methods come from KARGAM. They have been adapted so that they
-        would work correctly with Android requirements, with efficiency adjustments. */
+        work correctly with Android requirements, with some efficiency adjustments. */
     public void runKarga(Uri sourceFile, Uri dataFile) throws Exception
     {
         long time0 = System.currentTimeMillis();
         long startTime, endTime, elapsedTime;
         float totalRam, usedRam;
+        ArrayList<String> finalGeneList = new ArrayList<>();
 
         Random randomNumber = new Random();
         int numT = 25000;
@@ -91,7 +94,7 @@ public class Mapper extends Worker{
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
         String fileLocation;
 
-        int k = ((GlobalVariables)this.getApplicationContext()).getKValue();
+        int k = ((Global)this.getApplicationContext()).getKValue();
         if (k%2==0) k=k+1; if (k<11) {System.out.println("Minimum value of k must be 11"); k=11;}
 
         System.out.println("Reading AMR gene database, creating k-mer mapping (k="+k+")");
@@ -122,7 +125,7 @@ public class Mapper extends Worker{
                 sequence = new StringBuilder(checkAndAmendRead(sequence.toString()));
                 AMRGene amrgene = new AMRGene(sequence.toString());
 
-                //This looks for 17 character long strings in the sequence
+                //For each kmer (k character long string in the sequence)
                 for (int g=0; g<sequence.length()-k+1; g++)
                 {
                     String fk = sequence.substring(g,g+k);
@@ -227,7 +230,6 @@ public class Mapper extends Worker{
         elapsedTime = endTime - startTime;
         System.out.println("Empirical distribution for "+numT+" random reads estimated in "+elapsedTime/1000+" seconds");
 
-
         startTime = System.currentTimeMillis();
 
         inputStream = getApplicationContext().getContentResolver().openInputStream(sourceFile);
@@ -322,7 +324,8 @@ public class Mapper extends Worker{
 
         bufferedReader.close();
 
-        fileLocation = getApplicationContext().getExternalFilesDir(null)+"/"+"_KARGAM_mappedGenes.csv";
+        fileLocation = getApplicationContext().getExternalFilesDir(null)+"/"+getFileName(sourceFile)+"_KARGAM_mappedGenes.csv";
+        System.out.print("File location is: "+fileLocation+" \r\n");
 
         FileWriter filewriter = new FileWriter(fileLocation);
         BufferedWriter writer = new BufferedWriter(filewriter);
@@ -366,6 +369,8 @@ public class Mapper extends Worker{
             bestStart++; bestStop++;
             if (percCovered>0.01f)
             {
+                finalGeneList.add(key+","+100*percCovered+"%,"+kmerDepth);
+
                 writer.write(key+",");
                 writer.write(100*percCovered+"%,");
                 writer.write(kmerDepth+",");
@@ -374,6 +379,8 @@ public class Mapper extends Worker{
             }
         }
         writer.close();
+        ((Global)this.getApplicationContext()).setFinalGeneList(finalGeneList);
+
         endTime = System.currentTimeMillis();
         elapsedTime = endTime - startTime;
         System.out.print("Reads and genes mapped in = "+elapsedTime/1000+" s\r\n");
@@ -444,13 +451,26 @@ public class Mapper extends Worker{
         }
         return k.toString();
     }
-
-    /**
-     * Method that compares two hashmap objects by their stored float value
-     */
-    public static Comparator<HashMap.Entry<String,Float>> sortHashMapByValueFloat = (e1, e2) -> {
-        Float f1 = e1.getValue();
-        Float f2 = e2.getValue();
-        return f2.compareTo(f1);
-    };
+    @SuppressLint("Range")
+    public String getFileName(Uri uri) {
+        String result = null;
+        String[] finalResult;
+        if (uri.getScheme().equals("content")) {
+            try (Cursor cursor = getApplicationContext().getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        System.out.print("Filename is: " +result+" \r\n");
+        return result;
     }
+}
+
