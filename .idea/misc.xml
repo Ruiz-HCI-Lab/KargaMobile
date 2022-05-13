@@ -4,8 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/alexb/AndroidStudioProjects/KargAndroid/app/src/main/res/layout/activity_main.xml" value="0.33469202898550726" />
-        <entry key="..\:/Users/alexb/AndroidStudioProjects/KargaMobile/app/src/main/res/layout/activity_main.xml" value="0.27239583333333334" />
-        <entry key="..\:/Users/alexb/AndroidStudioProjects/KargaMobile/app/src/main/res/layout/activity_welcome_screen.xml" value="0.27239583333333334" />
+        <entry key="..\:/Users/alexb/AndroidStudioProjects/KargaMobile/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.31" />
+        <entry key="..\:/Users/alexb/AndroidStudioProjects/KargaMobile/app/src/main/res/drawable/rectanglebg.xml" value="0.31" />
+        <entry key="..\:/Users/alexb/AndroidStudioProjects/KargaMobile/app/src/main/res/layout/activity_configurations.xml" value="0.253125" />
+        <entry key="..\:/Users/alexb/AndroidStudioProjects/KargaMobile/app/src/main/res/layout/activity_main.xml" value="0.152" />
+        <entry key="..\:/Users/alexb/AndroidStudioProjects/KargaMobile/app/src/main/res/layout/activity_results.xml" value="0.253125" />
+        <entry key="..\:/Users/alexb/AndroidStudioProjects/KargaMobile/app/src/main/res/layout/activity_welcome_screen.xml" value="0.2" />
+        <entry key="..\:/Users/alexb/AndroidStudioProjects/KargaMobile/app/src/main/res/layout/gene_list_row.xml" value="0.536" />
         <entry key="..\:/Users/alexb/AndroidStudioProjects/Phoni/app/src/main/res/drawable/arrowRight_background.xml" value="0.27708333333333335" />
         <entry key="..\:/Users/alexb/AndroidStudioProjects/Phoni/app/src/main/res/drawable/arrowRight_foreground.xml" value="0.27708333333333335" />
         <entry key="..\:/Users/alexb/AndroidStudioProjects/Phoni/app/src/main/res/drawable/rectanglebg.xml" value="0.246875" />

@@ -32,10 +32,13 @@ import android.widget.Toast;
 
 import java.util.Objects;
 
-
 public class MainActivity extends AppCompatActivity {
 
+    private static final boolean TEST = true;
+
     private static final int PERMISSION_REQUEST_STORAGE = 1000;
+    private static final int SOURCE_SEARCH = 1;
+    private static final int DATABASE_SEARCH = 2;
 
     Button bSelectSource, bSelectDataBase, bScanMatch, bShowResults;
     TextView tvOutput, tvSelectedSource, tvSelectedDatabase;
@@ -70,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
         tvSelectedDatabase = findViewById(R.id.tvDatabaseFile);
         pbMatchProgress = findViewById(R.id.pbMatchProgress);
 
-        bSelectSource.setOnClickListener(v -> performSourceSearch());
-        bSelectDataBase.setOnClickListener(v -> performDatabaseSearch());
+        bSelectSource.setOnClickListener(v -> performSearch(SOURCE_SEARCH));
+        bSelectDataBase.setOnClickListener(v -> performSearch(DATABASE_SEARCH));
         bScanMatch.setOnClickListener(v -> performScanMatch());
 
         //On page load, Scan Button is showing, no Source or Database picked
@@ -79,29 +82,41 @@ public class MainActivity extends AppCompatActivity {
         boolSourceSelected =  false;
         boolDataBaseSelected = false;
 
-
         bShowResults.setOnClickListener(
                 v -> {
                     Intent i = new Intent(MainActivity.this,Results.class);
                     startActivity(i);
                 }
         );
+
+        if (TEST) {
+            Button bTest;
+            bTest = findViewById(R.id.bTest);
+            bTest.setVisibility(View.VISIBLE);
+            bTest.setOnClickListener(
+                    v -> {
+                        Intent i = new Intent(MainActivity.this,TestResults.class);
+                        startActivity(i);
+                    }
+            );
+        }
+
+
     }
 
-    //Invokes the file search method, with objects that Android identifies as text files only.
-    private void performSourceSearch()
+    //Invokes the file search method.
+    private void performSearch(Integer activityType)
     {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.setType("*/*");
-        openActivityResultLauncherSource.launch(intent);
-    }
 
-    //Invokes the file search method, with objects that Android identifies as text files only.
-    private void performDatabaseSearch()
-    {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        intent.setType("*/*");
-        openActivityResultLauncherDatabase.launch(intent);
+        //Type 1 = Sequence/Source, Type 2 = Reference/Database
+        if (activityType == SOURCE_SEARCH) {
+            openActivityResultLauncherSource.launch(intent);
+        }
+        else if (activityType == DATABASE_SEARCH) {
+            openActivityResultLauncherDatabase.launch(intent);
+        }
     }
 
     private void checkIfButtonCanBeActivated()
@@ -112,20 +127,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     //Calls the method that reads the text from the given URI, which also includes all KARGA functionality
     private void performScanMatch()
     {
         WorkManager workManager = WorkManager.getInstance(getApplicationContext());
 
         if (boolScanButton){
-            Data myParameter = new Data.Builder()
-                    .putString(Mapper.KEY_URI,sourceFileUri.toString())
+            Data myParameters = new Data.Builder()
+                    .putString(Mapper.KEY_SOURCE,sourceFileUri.toString())
+                    .putString(Mapper.KEY_DATA,dataBaseFileUri.toString())
                     .build();
 
             try {
                 mapperWorkRequest = new OneTimeWorkRequest.Builder(Mapper.class)
-                                        .setInputData(myParameter)
+                                        .setInputData(myParameters)
                                         .build();
                 workManager.enqueue(mapperWorkRequest);
                 pbMatchProgress.setVisibility(View.VISIBLE);
@@ -220,4 +235,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return result;
     }
+
 }

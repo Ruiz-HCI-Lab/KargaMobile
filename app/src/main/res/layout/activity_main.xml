@@ -14,8 +14,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginStart="33dp"
+        android:layout_marginTop="66dp"
         android:background="@drawable/rectanglebg"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,7 +41,7 @@
                 android:id="@+id/tvGreaterThan1"
                 android:layout_width="15dp"
                 android:layout_height="wrap_content"
-                android:text="@string/greaterthanstring" />
+                android:text="@string/greater_than_string" />
 
             <TextView
                 android:id="@+id/tvSourceFile"
@@ -68,8 +68,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="173dp"
+        android:layout_marginStart="33dp"
+        android:layout_marginTop="210dp"
         android:background="@drawable/rectanglebg"
         android:orientation="vertical">
 
@@ -91,7 +91,7 @@
                 android:id="@+id/tvGreaterThan2"
                 android:layout_width="15dp"
                 android:layout_height="wrap_content"
-                android:text="@string/greaterthanstring" />
+                android:text="@string/greater_than_string" />
 
             <TextView
                 android:id="@+id/tvDatabaseFile"
@@ -131,10 +131,10 @@
         android:layout_height="64dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="62dp"
         android:backgroundTint="#0021A5"
-        android:text="@string/scan_match"
         android:enabled="false"
+        android:text="@string/scan_match"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -142,12 +142,30 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
+    <Button
+        android:id="@+id/bTest"
+        android:layout_width="80dp"
+        android:layout_height="64dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="14dp"
+        android:backgroundTint="#0021A5"
+        android:text="TEST"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="120dp"
+        android:layout_marginBottom="240dp"
         android:orientation="horizontal">
 
         <Button
