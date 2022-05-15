@@ -6,26 +6,20 @@
 // -----------------------------------------------------------------------
 package org.ruizlab.phoni.kargamobile;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
+import android.widget.FrameLayout;
 
-import com.google.android.material.slider.Slider;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import com.google.android.material.tabs.TabLayout;
 
 
-public class Results extends AppCompatActivity implements GeneListAdapter.ItemClickListener{
+public class Results extends AppCompatActivity {
 
-    GeneListAdapter adapter;
-    Slider coverageSlider;
-    Float coverageValue;
-    HashMap<String,Integer> classMap;
-    ArrayList<String> finalGeneList;
+    FrameLayout flFrame;
+    TabLayout tlTabs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,55 +28,48 @@ public class Results extends AppCompatActivity implements GeneListAdapter.ItemCl
 
         getSupportActionBar().hide();
 
-        // set up the RecyclerView
-        RecyclerView recyclerView = findViewById(R.id.rvGeneList);
+        //Set up the interface objects
+        flFrame = findViewById(R.id.flFrame);
+        tlTabs = findViewById(R.id.tlTabs);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        finalGeneList = ((Global)this.getApplicationContext()).getFinalGeneList();
-
-        adapter = new GeneListAdapter(this, finalGeneList);
-        adapter.setClickListener(this);
-        recyclerView.setAdapter(adapter);
-
-        classMap = new HashMap<>();
-        this.setClassMap();
-
-        coverageSlider = findViewById(R.id.sSlider);
-        coverageSlider.setVisibility(View.INVISIBLE);
-
-        /* Work in process:
-        Add a coverage map to the geneList so we can update what genes to be shown in the list
-        coverageSlider.setValue(((Global)this.getApplicationContext()).getCoverageValue());
-
-        String coverageValue[] = geneData[1].split("%",2);
-        this.mCoverage.put(position,Float.parseFloat(coverageValue[0]));
-
-
-        coverageSlider.addOnChangeListener((coverageSlider, value, fromUser) -> {
-
-            adapter.notifyDataSetChanged();
+        //Tab selection logic
+        tlTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    Fragment fragment = null;
+                    switch (tab.getPosition()) {
+                        case 0:
+                            fragment = new GenesFragment();
+                            break;
+                        case 1:
+                            fragment = new ClassesFragment();
+                            break;
+                        case 2:
+                            fragment = new ExportFragment();
+                            break;
+                    }
+                    FragmentManager fm = getSupportFragmentManager();
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.replace(R.id.flFrame, fragment);
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    ft.commit();
+                }
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {}
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {}
         });
-        */
+
+        //Create multiple tabs
+        TabLayout.Tab firstTab = tlTabs.newTab();
+        firstTab.setText("Genes");
+        tlTabs.addTab(firstTab);
+        TabLayout.Tab secondTab = tlTabs.newTab();
+        secondTab.setText("Classes");
+        tlTabs.addTab(secondTab);
+        TabLayout.Tab thirdTab = tlTabs.newTab();
+        thirdTab.setText("Export");
+        tlTabs.addTab(thirdTab);
 
     }
-
-    @Override
-    public void onItemClick(View view, int position) {
-        Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
-    }
-
-    public void setClassMap() {
-        finalGeneList.forEach((n)-> {
-            String[] geneData, geneId;
-            String geneKey;
-
-            geneData = n.split(",",3);
-            geneId = geneData[0].split("\\|",5);
-            geneKey = geneId[2];
-
-            classMap.merge(geneKey, 1, Integer::sum);
-        });
-    }
-
 }

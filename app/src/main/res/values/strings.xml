@@ -23,4 +23,6 @@
     <string name="gene_id_title">Gene Id: </string>
     <string name="coverage_percent_title">Coverage: </string>
     <string name="coverage_threshold">Select Coverage Threshold</string>
+    <string name="export_mapped_genes">Export Mapped Genes File</string>
+    <string name="gene_count_title">Total Mapped Genes:</string>
 </resources>

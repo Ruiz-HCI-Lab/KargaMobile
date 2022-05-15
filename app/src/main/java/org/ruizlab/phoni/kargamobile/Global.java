@@ -21,6 +21,10 @@ public class Global extends Application {
     private int kValue = 17;
     private float coverageValue = 80;
     private ArrayList<String> finalGeneList;
+    private Uri mappedGenesUri;
+    private Boolean mapperIsRunning = false;
+    private Boolean analyticsStatus = true;
+    private ArrayList<String> analyticsData;
 
     public int getKValue() {
         return kValue;
@@ -40,5 +44,36 @@ public class Global extends Application {
         return finalGeneList;
     }
     public void setFinalGeneList(ArrayList<String> finalGeneList) { this.finalGeneList = finalGeneList; }
+
+    public Uri getMappedGenesUri() {
+        return mappedGenesUri;
+    }
+    public void setMappedGenesUri(Uri mappedGenesUri) {
+        this.mappedGenesUri = mappedGenesUri;
+    }
+
+    public Boolean mapperIsRunning() {
+        return mapperIsRunning;
+    }
+    public void startMapper() {
+        this.mapperIsRunning = Boolean.TRUE;
+    }
+    public void stopMapper() {
+        this.mapperIsRunning = Boolean.FALSE;
+    }
+
+    public Boolean analyticsAreEnabled() {return analyticsStatus;}
+    public void enableAnalytics() {
+        this.analyticsStatus = Boolean.TRUE;
+    }
+    public void disableAnalytics() {
+        this.analyticsStatus = Boolean.FALSE;
+    }
+
+    public ArrayList<String> getAnalyticsData() {
+        return analyticsData;
+    }
+    public void setAnalyticsData(ArrayList<String> analyticsData) { this.analyticsData = analyticsData; }
+
 
 }

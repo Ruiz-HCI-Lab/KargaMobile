@@ -6,20 +6,29 @@
 // -----------------------------------------------------------------------
 package org.ruizlab.phoni.kargamobile;
 
+import static android.content.Context.SENSOR_SERVICE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 
 import androidx.annotation.*;
+import androidx.core.content.FileProvider;
 import androidx.work.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -86,6 +95,7 @@ public class Mapper extends Worker{
         long startTime, endTime, elapsedTime;
         float totalRam, usedRam;
         ArrayList<String> finalGeneList = new ArrayList<>();
+        DecimalFormat dfZero = new DecimalFormat("0.00");
 
         Random randomNumber = new Random();
         int numT = 25000;
@@ -369,7 +379,8 @@ public class Mapper extends Worker{
             bestStart++; bestStop++;
             if (percCovered>0.01f)
             {
-                finalGeneList.add(key+","+100*percCovered+"%,"+kmerDepth);
+
+                finalGeneList.add(key+","+dfZero.format(100*percCovered)+"%,"+kmerDepth);
 
                 writer.write(key+",");
                 writer.write(100*percCovered+"%,");
@@ -380,6 +391,7 @@ public class Mapper extends Worker{
         }
         writer.close();
         ((Global)this.getApplicationContext()).setFinalGeneList(finalGeneList);
+        ((Global)this.getApplicationContext()).setMappedGenesUri(FileProvider.getUriForFile(getApplicationContext(), BuildConfig.APPLICATION_ID + ".provider", new File(fileLocation)));
 
         endTime = System.currentTimeMillis();
         elapsedTime = endTime - startTime;

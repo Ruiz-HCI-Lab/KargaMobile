@@ -7,70 +7,16 @@
     tools:context="org.ruizlab.phoni.kargamobile.Results">
 
     <com.google.android.material.tabs.TabLayout
-        android:layout_width="409dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Genes" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Categories" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Export" />
-    </com.google.android.material.tabs.TabLayout>
-
-    <LinearLayout
+        android:id="@+id/tlTabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/rectanglebg"
-        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tvSourceHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/coverage_threshold"
-            android:textColor="#FA4616"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:visibility="invisible" />
-
-        <com.google.android.material.slider.Slider
-            android:id="@+id/sSlider"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:value="80.0"
-            android:valueFrom="0.0"
-            android:valueTo="100.0"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="86dp" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvGeneList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
+    <FrameLayout
+        android:id="@+id/flFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
