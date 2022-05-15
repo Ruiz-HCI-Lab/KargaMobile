@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -37,12 +38,13 @@ public class GeneListAdapter extends RecyclerView.Adapter<GeneListAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         String[] geneData = mData.get(position).split(",",3);
         String[] geneId = geneData[0].split("\\|",5);
-        holder.geneId1.setText(geneId[0]);
+        holder.geneId1.setText(String.format("%s. %s", position, geneId[0].substring(1)));
         holder.geneId2.setText(String.format("%s|%s|", geneId[1], geneId[2]));
         holder.geneId3.setText(String.format("%s|%s|", geneId[3], geneId[4]));
         holder.coveragePercent.setText(geneData[1]);
-        holder.averageDepth.setText(geneData[2]);
-
+        float f = Float.parseFloat(geneData[2]);
+        DecimalFormat dfZero = new DecimalFormat("0.0000");
+        holder.averageDepth.setText(String.valueOf(dfZero.format(f)));
     }
 
     // total number of rows
