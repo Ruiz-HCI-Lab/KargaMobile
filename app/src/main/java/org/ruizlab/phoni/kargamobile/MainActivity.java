@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 //WorkManager
+import androidx.lifecycle.LifecycleOwner;
 import androidx.work.*;
 
 import android.Manifest;
@@ -20,6 +21,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
@@ -32,7 +37,7 @@ import android.widget.Toast;
 
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private static final boolean TEST = true;
 
@@ -44,8 +49,10 @@ public class MainActivity extends AppCompatActivity {
     TextView tvOutput, tvSelectedSource, tvSelectedDatabase;
     Uri sourceFileUri, dataBaseFileUri;
     ProgressBar pbMatchProgress;
-    WorkRequest mapperWorkRequest;
+    WorkRequest mapperWorkRequest, analyticsWorkRequest;
     Boolean boolSourceSelected, boolDataBaseSelected, boolScanButton;
+    SensorManager mSensorManager;
+    Sensor mTemperature;
 
     //Method that attaches actions to screen objects
     @Override
@@ -54,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Objects.requireNonNull(getSupportActionBar()).hide();
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mTemperature = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_STORAGE);
@@ -100,8 +110,6 @@ public class MainActivity extends AppCompatActivity {
                     }
             );
         }
-
-
     }
 
     //Invokes the file search method.
@@ -146,9 +154,14 @@ public class MainActivity extends AppCompatActivity {
                 pbMatchProgress.setVisibility(View.VISIBLE);
                 bScanMatch.setText(R.string.stop);
                 boolScanButton = false;
-
+                if(((Global)getApplicationContext()).analyticsAreEnabled())
+                {
+                    analyticsWorkRequest = new OneTimeWorkRequest.Builder(Analytics.class)
+                            .build();
+                    workManager.enqueue(analyticsWorkRequest);
+                }
                 workManager.getWorkInfoByIdLiveData(mapperWorkRequest.getId())
-                        .observe(this, workInfo -> {
+                        .observe((LifecycleOwner) this, workInfo -> {
                             if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                                 Toast.makeText(getApplicationContext(),"READ FINALIZED!", Toast.LENGTH_SHORT).show();
                                 pbMatchProgress.setVisibility(View.GONE);
@@ -157,6 +170,14 @@ public class MainActivity extends AppCompatActivity {
                                 bShowResults.setVisibility(View.VISIBLE);
                             }
                         });
+                workManager.getWorkInfoByIdLiveData(analyticsWorkRequest.getId())
+                        .observe((LifecycleOwner) this, workInfo -> {
+                            if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
+                                Toast.makeText(getApplicationContext(), "ANALYTICS DONE!", Toast.LENGTH_SHORT).show();
+                                mSensorManager.unregisterListener(this);
+                            }
+                        });
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -170,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //After the file has been picked, this activity executes.
+    //After the SEQUENCE/SOURCE file has been picked, this activity executes.
     //It takes the file URI and saves the global variable for later use.
     ActivityResultLauncher<Intent> openActivityResultLauncherSource = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -180,13 +201,15 @@ public class MainActivity extends AppCompatActivity {
                     assert data != null;
 
                     sourceFileUri = data.getData();
-                    tvSelectedSource.setText(getFileName(sourceFileUri));
+                    String sequenceFileName = getFileName(sourceFileUri);
+                    tvSelectedSource.setText(sequenceFileName);
+                    ((Global)this.getApplicationContext()).setSequenceFilename(sequenceFileName);
                     boolSourceSelected = true;
                     checkIfButtonCanBeActivated();
                 }
             });
 
-    //After the file has been picked, this activity executes.
+    //After the REFERENCE/DATABASE has been picked, this activity executes.
     //It takes the file URI and saves the global variable for later use.
     ActivityResultLauncher<Intent> openActivityResultLauncherDatabase = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -196,7 +219,9 @@ public class MainActivity extends AppCompatActivity {
                     assert data != null;
 
                     dataBaseFileUri = data.getData();
-                    tvSelectedDatabase.setText(getFileName(dataBaseFileUri));
+                    String referenceFileName = getFileName(dataBaseFileUri);
+                    tvSelectedDatabase.setText(referenceFileName);
+                    ((Global)this.getApplicationContext()).setReferenceFilename(referenceFileName);
                     boolDataBaseSelected = true;
                     checkIfButtonCanBeActivated();
                 }
@@ -234,6 +259,34 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return result;
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        ((Global)getApplicationContext()).setTemp(event.values[0]);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mSensorManager.registerListener(this, mTemperature, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(this, mTemperature, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
     }
 
 }
