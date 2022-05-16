@@ -21,10 +21,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
@@ -37,7 +33,7 @@ import android.widget.Toast;
 
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity{
 
     private static final boolean TEST = true;
 
@@ -51,8 +47,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     ProgressBar pbMatchProgress;
     WorkRequest mapperWorkRequest, analyticsWorkRequest;
     Boolean boolSourceSelected, boolDataBaseSelected, boolScanButton;
-    SensorManager mSensorManager;
-    Sensor mTemperature;
 
     //Method that attaches actions to screen objects
     @Override
@@ -61,8 +55,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
 
         Objects.requireNonNull(getSupportActionBar()).hide();
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        mTemperature = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
 
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -151,6 +143,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                         .setInputData(myParameters)
                                         .build();
                 workManager.enqueue(mapperWorkRequest);
+                System.out.println("MAPPER STARTING");
+                ((Global)this.getApplicationContext()).mapperStarts();
                 pbMatchProgress.setVisibility(View.VISIBLE);
                 bScanMatch.setText(R.string.stop);
                 boolScanButton = false;
@@ -159,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     analyticsWorkRequest = new OneTimeWorkRequest.Builder(Analytics.class)
                             .build();
                     workManager.enqueue(analyticsWorkRequest);
+                    System.out.println("ANALYTICS STARTING");
                 }
                 workManager.getWorkInfoByIdLiveData(mapperWorkRequest.getId())
                         .observe((LifecycleOwner) this, workInfo -> {
@@ -168,13 +163,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                 bScanMatch.setText(R.string.scan_match);
                                 boolScanButton = true;
                                 bShowResults.setVisibility(View.VISIBLE);
+                                ((Global)this.getApplicationContext()).mapperStops();
                             }
                         });
                 workManager.getWorkInfoByIdLiveData(analyticsWorkRequest.getId())
                         .observe((LifecycleOwner) this, workInfo -> {
                             if (workInfo.getState() == WorkInfo.State.SUCCEEDED) {
                                 Toast.makeText(getApplicationContext(), "ANALYTICS DONE!", Toast.LENGTH_SHORT).show();
-                                mSensorManager.unregisterListener(this);
                             }
                         });
 
@@ -260,33 +255,4 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         return result;
     }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        ((Global)getApplicationContext()).setTemp(event.values[0]);
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mSensorManager.registerListener(this, mTemperature, SensorManager.SENSOR_DELAY_NORMAL);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mSensorManager.registerListener(this, mTemperature, SensorManager.SENSOR_DELAY_NORMAL);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mSensorManager.unregisterListener(this);
-    }
-
 }

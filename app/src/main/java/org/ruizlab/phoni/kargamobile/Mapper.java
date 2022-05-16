@@ -7,12 +7,16 @@
 package org.ruizlab.phoni.kargamobile;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 
 import androidx.annotation.*;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.FileProvider;
 import androidx.work.*;
 
@@ -51,6 +55,8 @@ public class Mapper extends Worker{
     public static final String KEY_SOURCE = "SOURCE";
     public static final String KEY_DATA = "DATA";
 
+    private NotificationManager notificationManager;
+
     public Mapper(
             @NonNull Context context,
             @NonNull WorkerParameters params) {
@@ -61,26 +67,66 @@ public class Mapper extends Worker{
     @Override
     public Result doWork() {
 
+        System.out.println("MAPPER STARTED");
         Uri sourceFile = Uri.parse(getInputData().getString(KEY_SOURCE));
         Uri dataFile = Uri.parse(getInputData().getString(KEY_DATA));
+        setForegroundAsync(createForegroundInfo());
         try {
-            ((Global)this.getApplicationContext()).mapperStarts();
             runKarga(sourceFile, dataFile);
-            ((Global)this.getApplicationContext()).mapperStops();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // Indicate whether the work finished successfully with the Result
+
+        System.out.println("MAPPER FINISHED");
         return Result.success();
     }
 
+    @NonNull
+    private ForegroundInfo createForegroundInfo() {
+
+        Context context = getApplicationContext();
+        String id = "1";
+        String title = "Mapper";
+
+        /*
+        String cancel = context.getString(R.string.cancel_download);
+        // This PendingIntent can be used to cancel the worker
+        PendingIntent intent = WorkManager.getInstance(context)
+                .createCancelPendingIntent(getId());
+         */
+
+        createChannel(id);
+
+        Notification notification = new NotificationCompat.Builder(context,id)
+                .setContentTitle(title)
+                .setTicker(title)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                //.setSmallIcon(R.drawable.ic_work_notification)
+                .setOngoing(true)
+                // Add the cancel action to the notification which can
+                // be used to cancel the worker
+                //.addAction(android.R.drawable.ic_delete, cancel, intent)
+                .build();
+        return new ForegroundInfo(Integer.parseInt(id),notification);
+    }
+
+    private void createChannel(String id) {
+        CharSequence name = "KargaMobile - Mapper";
+        String description = "Gene Mapping Process";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(id, name, importance);
+        channel.setDescription(description);
+        NotificationManager notificationManager = getApplicationContext().getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+
+
     @Override
     public void onStopped() {
-
         // TBD: Something must be added here so that work actually stops when the button is hit
         super.onStopped();
-
     }
 
     /*All following methods come from KARGAM. They have been adapted so that they

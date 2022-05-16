@@ -1,7 +1,12 @@
 package org.ruizlab.phoni.kargamobile;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.work.ForegroundInfo;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 import java.io.BufferedWriter;
@@ -10,6 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Analytics extends Worker{
+
+    private NotificationManager notificationManager;
 
     public Analytics(
             @NonNull Context context,
@@ -20,6 +27,9 @@ public class Analytics extends Worker{
     @NonNull
     @Override
     public Result doWork() {
+
+        System.out.println("ANALYTICS STARTED");
+        setForegroundAsync(createForegroundInfo());
         ArrayList<String> analyticValues = new ArrayList<>();
         long startTime, endTime, elapsedTime;
         float maxRam = 0;
@@ -68,7 +78,10 @@ public class Analytics extends Worker{
                 counter++;
                 Thread.sleep(3000);
 
-                System.out.println("Analytics read #"+ counter +". Current ram: "+ currentRam +", Max ram: "+ maxRam + ", Current temp: "+ currentTemp +", Max temp: "+ maxTemp);
+                endTime = System.currentTimeMillis();
+                elapsedTime = endTime-startTime;
+
+                System.out.println("Analytics read #"+ counter +". Elapsed time: " + elapsedTime/1000 + "s, Current ram: "+ currentRam/(1024*1024)+"MB" +", Max ram: "+ maxRam/(1024*1024)+"MB" + ", Current temp: "+ currentTemp +", Max temp: "+ maxTemp);
             }
 
             totalRam = totalRam/counter;
@@ -78,8 +91,8 @@ public class Analytics extends Worker{
             elapsedTime = endTime-startTime;
             analyticValues.add(""+elapsedTime/1000); //2
             analyticValues.add(""+elapsedTime/1000); //3
-            analyticValues.add(""+maxRam); //4
-            analyticValues.add(""+totalRam); //5
+            analyticValues.add(""+maxRam/(1024*1024)+"MB"); //4
+            analyticValues.add(""+totalRam/(1024*1024)+"MB"); //5
             analyticValues.add(""+maxTemp); //6
             analyticValues.add(""+totalTemp); //7
 
@@ -88,6 +101,8 @@ public class Analytics extends Worker{
             }
             writer.write(analyticValues.get(7)+"\r\n");
             writer.close();
+
+            System.out.println("ANALYTICS FINISHED");
             return Result.success();
         }
         catch (IOException | InterruptedException e) {
@@ -95,5 +110,45 @@ public class Analytics extends Worker{
             return Result.failure();
         }
     }
+
+    @NonNull
+    private ForegroundInfo createForegroundInfo() {
+
+        Context context = getApplicationContext();
+        String id = "2";
+        String title = "Analytics";
+
+        /*
+        String cancel = context.getString(R.string.cancel_download);
+        // This PendingIntent can be used to cancel the worker
+        PendingIntent intent = WorkManager.getInstance(context)
+                .createCancelPendingIntent(getId());
+         */
+
+        createChannel(id);
+
+        Notification notification = new NotificationCompat.Builder(context,id)
+                .setContentTitle(title)
+                .setTicker(title)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                //.setSmallIcon(R.drawable.ic_work_notification)
+                .setOngoing(true)
+                // Add the cancel action to the notification which can
+                // be used to cancel the worker
+                //.addAction(android.R.drawable.ic_delete, cancel, intent)
+                .build();
+        return new ForegroundInfo(Integer.parseInt(id),notification);
+    }
+
+    private void createChannel(String id) {
+        CharSequence name = "KargaMobile - Analytics";
+        String description = "Analytics Process";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(id, name, importance);
+        channel.setDescription(description);
+        NotificationManager notificationManager = getApplicationContext().getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+
 
 }
