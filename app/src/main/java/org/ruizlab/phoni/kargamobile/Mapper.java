@@ -6,15 +6,9 @@
 // -----------------------------------------------------------------------
 package org.ruizlab.phoni.kargamobile;
 
-import static android.content.Context.SENSOR_SERVICE;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.net.Uri;
 import android.provider.OpenableColumns;
 
@@ -70,7 +64,9 @@ public class Mapper extends Worker{
         Uri sourceFile = Uri.parse(getInputData().getString(KEY_SOURCE));
         Uri dataFile = Uri.parse(getInputData().getString(KEY_DATA));
         try {
+            ((Global)this.getApplicationContext()).mapperStarts();
             runKarga(sourceFile, dataFile);
+            ((Global)this.getApplicationContext()).mapperStops();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -195,6 +191,8 @@ public class Mapper extends Worker{
         i=0;
         double avg=0f;
         String line;
+
+
         while(bufferedReader.readLine() !=null || i<numT)
         {
             line=bufferedReader.readLine();
@@ -335,7 +333,7 @@ public class Mapper extends Worker{
         bufferedReader.close();
 
         fileLocation = getApplicationContext().getExternalFilesDir(null)+"/"+getFileName(sourceFile)+"_KARGAM_mappedGenes.csv";
-        System.out.print("File location is: "+fileLocation+" \r\n");
+        System.out.print("File location is: "+fileLocation+"w \r\n");
 
         FileWriter filewriter = new FileWriter(fileLocation);
         BufferedWriter writer = new BufferedWriter(filewriter);

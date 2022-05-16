@@ -24,7 +24,9 @@ public class Global extends Application {
     private Uri mappedGenesUri;
     private Boolean mapperIsRunning = false;
     private Boolean analyticsStatus = true;
-    private ArrayList<String> analyticsData;
+    private String sequenceFilename = "";
+    private String referenceFilename = "";
+    private float temp;
 
     public int getKValue() {
         return kValue;
@@ -55,10 +57,10 @@ public class Global extends Application {
     public Boolean mapperIsRunning() {
         return mapperIsRunning;
     }
-    public void startMapper() {
+    public void mapperStarts() {
         this.mapperIsRunning = Boolean.TRUE;
     }
-    public void stopMapper() {
+    public void mapperStops() {
         this.mapperIsRunning = Boolean.FALSE;
     }
 
@@ -70,10 +72,20 @@ public class Global extends Application {
         this.analyticsStatus = Boolean.FALSE;
     }
 
-    public ArrayList<String> getAnalyticsData() {
-        return analyticsData;
+    public String getSequenceFilename() {
+        return sequenceFilename;
     }
-    public void setAnalyticsData(ArrayList<String> analyticsData) { this.analyticsData = analyticsData; }
+    public void setSequenceFilename(String sequenceFilename) { this.sequenceFilename = sequenceFilename; }
 
+    public String getReferenceFilename() {
+        return referenceFilename;
+    }
+    public void setReferenceFilename(String referenceFilename) { this.referenceFilename = referenceFilename; }
 
+    public float getTemp() {
+        return temp;
+    }
+    public void setTemp(float temp) {
+        this.temp = temp;
+    }
 }

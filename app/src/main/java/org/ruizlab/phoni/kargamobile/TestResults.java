@@ -7,20 +7,16 @@
 package org.ruizlab.phoni.kargamobile;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class TestResults extends AppCompatActivity{
 
@@ -32,7 +28,7 @@ public class TestResults extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
 
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         ((Global)this.getApplicationContext()).setFinalGeneList(createTestList());
 
@@ -58,6 +54,7 @@ public class TestResults extends AppCompatActivity{
                 }
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
+                assert fragment != null;
                 ft.replace(R.id.flFrame, fragment);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 ft.commit();
