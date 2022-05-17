@@ -11,11 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class GeneListAdapter extends RecyclerView.Adapter<GeneListAdapter.ViewHolder> {
 
-    private ArrayList<String> mData;
+    private final ArrayList<String> mData;
     private final LayoutInflater mInflater;
     private ItemClickListener mClickListener;
 
@@ -44,7 +43,7 @@ public class GeneListAdapter extends RecyclerView.Adapter<GeneListAdapter.ViewHo
         holder.coveragePercent.setText(geneData[1]);
         float f = Float.parseFloat(geneData[2]);
         DecimalFormat dfZero = new DecimalFormat("0.0000");
-        holder.averageDepth.setText(String.valueOf(dfZero.format(f)));
+        holder.averageDepth.setText(dfZero.format(f));
     }
 
     // total number of rows

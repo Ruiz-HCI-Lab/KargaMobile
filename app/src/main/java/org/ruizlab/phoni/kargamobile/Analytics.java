@@ -9,9 +9,12 @@ import androidx.core.app.NotificationCompat;
 import androidx.work.ForegroundInfo;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
+
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Analytics extends Worker{
@@ -31,7 +34,7 @@ public class Analytics extends Worker{
         System.out.println("ANALYTICS STARTED");
         setForegroundAsync(createForegroundInfo());
         ArrayList<String> analyticValues = new ArrayList<>();
-        long startTime, endTime, elapsedTime;
+        long startTime, endTime, elapsedTime, initialUserCPUTime, finalUserCPUTime, totalUserCPUTime;
         float maxRam = 0;
         float totalRam = 0;
         float currentRam;
@@ -61,8 +64,6 @@ public class Analytics extends Worker{
             analyticValues.add(((Global)this.getApplicationContext()).getSequenceFilename()); //0
             analyticValues.add(((Global)this.getApplicationContext()).getReferenceFilename()); //1
 
-            System.out.println("Analytics started with Sequence File: "+ analyticValues.get(0) +", Reference File: "+ analyticValues.get(1));
-
             while (((Global) this.getApplicationContext()).mapperIsRunning())
             {
                 currentRam = (float) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
@@ -70,7 +71,7 @@ public class Analytics extends Worker{
                     maxRam = currentRam;
                 }
                 totalRam += currentRam;
-                currentTemp = ((Global)getApplicationContext()).getTemp();
+                currentTemp = getCPUTemperature();
                 if (maxTemp < currentTemp) {
                     maxTemp = currentTemp;
                 }
@@ -91,6 +92,7 @@ public class Analytics extends Worker{
             elapsedTime = endTime-startTime;
             analyticValues.add(""+elapsedTime/1000); //2
             analyticValues.add(""+elapsedTime/1000); //3
+            //analyticValues.add(""+totalUserCPUTime/1000); //3
             analyticValues.add(""+maxRam/(1024*1024)+"MB"); //4
             analyticValues.add(""+totalRam/(1024*1024)+"MB"); //5
             analyticValues.add(""+maxTemp); //6
@@ -150,5 +152,23 @@ public class Analytics extends Worker{
         notificationManager.createNotificationChannel(channel);
     }
 
-
+    public static float getCPUTemperature()
+    {
+        Process process;
+        try {
+            process = Runtime.getRuntime().exec("cat sys/class/thermal/thermal_zone0/temp");
+            process.waitFor();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line = reader.readLine();
+            if(line!=null) {
+                float temp = Float.parseFloat(line);
+                return temp / 1000.0f;
+            }else{
+                return 51.0f;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0f;
+        }
+    }
 }
