@@ -144,7 +144,6 @@ public class MainActivity extends AppCompatActivity{
                                         .build();
                 workManager.enqueue(mapperWorkRequest);
                 System.out.println("MAPPER STARTING");
-                ((Global)this.getApplicationContext()).mapperStarts();
                 pbMatchProgress.setVisibility(View.VISIBLE);
                 bScanMatch.setText(R.string.stop);
                 boolScanButton = false;
@@ -163,7 +162,6 @@ public class MainActivity extends AppCompatActivity{
                                 bScanMatch.setText(R.string.scan_match);
                                 boolScanButton = true;
                                 bShowResults.setVisibility(View.VISIBLE);
-                                ((Global)this.getApplicationContext()).mapperStops();
                             }
                         });
                 workManager.getWorkInfoByIdLiveData(analyticsWorkRequest.getId())
