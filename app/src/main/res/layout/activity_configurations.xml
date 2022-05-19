@@ -13,7 +13,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="35dp"
-        android:layout_marginTop="136dp"
+        android:layout_marginTop="80dp"
         android:background="@drawable/rectanglebg"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,6 +51,50 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="241dp"
+        android:layout_height="178dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="35dp"
+        android:layout_marginTop="250dp"
+        android:background="@drawable/rectanglebg"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.37"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvCoverage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coverage_value_header"
+            android:textColor="#FA4616"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="199dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <NumberPicker
+                android:id="@+id/npCoverageValue"
+                android:layout_width="193dp"
+                android:layout_height="115dp"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
     <Button
         android:id="@+id/bBack"
         android:layout_width="wrap_content"

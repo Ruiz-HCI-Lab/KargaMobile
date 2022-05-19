@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">KargaMobile</string>
-    <string name="karga">Karga</string>
+    <string name="app_name">KARGAMobile</string>
+    <string name="karga">KARGA</string>
     <string name="mobile">Mobile</string>
     <string name="by">by</string>
     <string name="new_scan_match">New Gene Identification</string>
@@ -16,13 +16,14 @@
     <string name="database_file">...</string>
     <string name="show_results">Show Results</string>
     <string name="k_value_header">Select K Value</string>
+    <string name="coverage_value_header">Coverage Threshold</string>
     <string name="back">Back</string>
     <string name="slider_desc">Select Gene Coverage Threshold</string>
     <string name="greater_than_string"><![CDATA[>]]></string>
     <string name="identify_genes_text">IDENTIFY GENES</string>
     <string name="gene_id_title">Gene Id: </string>
     <string name="coverage_percent_title">Coverage: </string>
-    <string name="coverage_threshold">Select Coverage Threshold</string>
+    <string name="coverage_threshold">Coverage Threshold</string>
     <string name="export_mapped_genes">Export Mapped Genes File</string>
     <string name="gene_count_title">Total Mapped Genes:</string>
 </resources>

@@ -22,11 +22,13 @@ public class Global extends Application {
     private float coverageValue = 80;
     private ArrayList<String> finalGeneList;
     private Uri mappedGenesUri;
+    private Boolean interfaceTestActivated = false;
     private Boolean mapperIsRunning = false;
     private Boolean analyticsStatus = true;
     private String sequenceFilename = "";
     private String referenceFilename = "";
-    private float temp;
+    private long cpuTime;
+    private int classesToShow = 10;
 
     public int getKValue() {
         return kValue;
@@ -53,6 +55,14 @@ public class Global extends Application {
     public void setMappedGenesUri(Uri mappedGenesUri) {
         this.mappedGenesUri = mappedGenesUri;
     }
+
+    public Boolean getInterfaceTestActivated() {
+        return interfaceTestActivated;
+    }
+    public void activateInterfaceTests() {
+        this.interfaceTestActivated = Boolean.TRUE;
+    }
+    public void deactivateInterfaceTests() { this.interfaceTestActivated = Boolean.FALSE; }
 
     public Boolean mapperIsRunning() {
         return mapperIsRunning;
@@ -82,10 +92,18 @@ public class Global extends Application {
     }
     public void setReferenceFilename(String referenceFilename) { this.referenceFilename = referenceFilename; }
 
-    public float getTemp() {
-        return temp;
+    public long getCpuTime() {
+        return cpuTime;
     }
-    public void setTemp(float temp) {
-        this.temp = temp;
+    public void setCpuTime(long cpuTime) {
+        this.cpuTime = cpuTime;
     }
+
+    public int getClassesToShow() {
+        return classesToShow;
+    }
+    public void setClassesToShow(int classesToShow) {
+        this.classesToShow = classesToShow;
+    }
+
 }

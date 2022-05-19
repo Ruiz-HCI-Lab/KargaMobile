@@ -35,7 +35,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity{
 
-    private static final boolean TEST = true;
+    private static final boolean TEST = false;
 
     private static final int PERMISSION_REQUEST_STORAGE = 1000;
     private static final int SOURCE_SEARCH = 1;
@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity{
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_STORAGE);
         }
+
+
 
         Runtime rt = Runtime.getRuntime();
         long maxMemory = rt.maxMemory();
@@ -144,7 +146,6 @@ public class MainActivity extends AppCompatActivity{
                                         .build();
                 workManager.enqueue(mapperWorkRequest);
                 System.out.println("MAPPER STARTING");
-                ((Global)this.getApplicationContext()).mapperStarts();
                 pbMatchProgress.setVisibility(View.VISIBLE);
                 bScanMatch.setText(R.string.stop);
                 boolScanButton = false;
@@ -163,7 +164,6 @@ public class MainActivity extends AppCompatActivity{
                                 bScanMatch.setText(R.string.scan_match);
                                 boolScanButton = true;
                                 bShowResults.setVisibility(View.VISIBLE);
-                                ((Global)this.getApplicationContext()).mapperStops();
                             }
                         });
                 workManager.getWorkInfoByIdLiveData(analyticsWorkRequest.getId())

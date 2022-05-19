@@ -13,6 +13,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.provider.OpenableColumns;
 
 import androidx.annotation.*;
@@ -55,8 +56,6 @@ public class Mapper extends Worker{
     public static final String KEY_SOURCE = "SOURCE";
     public static final String KEY_DATA = "DATA";
 
-    private NotificationManager notificationManager;
-
     public Mapper(
             @NonNull Context context,
             @NonNull WorkerParameters params) {
@@ -66,19 +65,21 @@ public class Mapper extends Worker{
     @NonNull
     @Override
     public Result doWork() {
-
-        System.out.println("MAPPER STARTED");
         Uri sourceFile = Uri.parse(getInputData().getString(KEY_SOURCE));
         Uri dataFile = Uri.parse(getInputData().getString(KEY_DATA));
         setForegroundAsync(createForegroundInfo());
         try {
+            ((Global)this.getApplicationContext()).setCpuTime(SystemClock.currentThreadTimeMillis());
+            ((Global)this.getApplicationContext()).mapperStarts();
+            System.out.println("MAPPER STARTED");
             runKarga(sourceFile, dataFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // Indicate whether the work finished successfully with the Result
-
+        ((Global)this.getApplicationContext()).setCpuTime(SystemClock.currentThreadTimeMillis());
+        ((Global)this.getApplicationContext()).mapperStops();
         System.out.println("MAPPER FINISHED");
         return Result.success();
     }
@@ -423,9 +424,12 @@ public class Mapper extends Worker{
             bestStart++; bestStop++;
             if (percCovered>0.01f)
             {
-
-                finalGeneList.add(key+","+dfZero.format(100*percCovered)+"%,"+kmerDepth);
-
+                //TO DO: This next IF can be moved in the future to a different place (maybe with a dynamic filter on the GeneListAdapter)
+                //That way, you could hotswap the coverage% threshold to show less or more gene mappings
+                //If you remove the IF, you get all mappings into the list
+                if((percCovered*100)>((Global)getApplicationContext()).getCoverageValue()) {
+                    finalGeneList.add(key+","+dfZero.format(100*percCovered)+"%,"+kmerDepth);
+                }
                 writer.write(key+",");
                 writer.write(100*percCovered+"%,");
                 writer.write(kmerDepth+",");
@@ -510,7 +514,6 @@ public class Mapper extends Worker{
     @SuppressLint("Range")
     public String getFileName(Uri uri) {
         String result = null;
-        String[] finalResult;
         if (uri.getScheme().equals("content")) {
             try (Cursor cursor = getApplicationContext().getContentResolver().query(uri, null, null, null, null)) {
                 if (cursor != null && cursor.moveToFirst()) {
