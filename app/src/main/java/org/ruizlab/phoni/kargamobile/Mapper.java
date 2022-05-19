@@ -424,9 +424,12 @@ public class Mapper extends Worker{
             bestStart++; bestStop++;
             if (percCovered>0.01f)
             {
-
-                finalGeneList.add(key+","+dfZero.format(100*percCovered)+"%,"+kmerDepth);
-
+                //TO DO: This next IF can be moved in the future to a different place (maybe with a dynamic filter on the GeneListAdapter)
+                //That way, you could hotswap the coverage% threshold to show less or more gene mappings
+                //If you remove the IF, you get all mappings into the list
+                if((percCovered*100)>((Global)getApplicationContext()).getCoverageValue()) {
+                    finalGeneList.add(key+","+dfZero.format(100*percCovered)+"%,"+kmerDepth);
+                }
                 writer.write(key+",");
                 writer.write(100*percCovered+"%,");
                 writer.write(kmerDepth+",");

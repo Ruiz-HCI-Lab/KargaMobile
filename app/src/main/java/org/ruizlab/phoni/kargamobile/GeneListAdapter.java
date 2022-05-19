@@ -35,8 +35,13 @@ public class GeneListAdapter extends RecyclerView.Adapter<GeneListAdapter.ViewHo
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        //Typical string looks like:
+        //>MEG_1014|Drugs|Aminoglycosides|Aminoglycoside_O-phosphotransferases|APH2-DPRIME,12.86%,1.139130435
         String[] geneData = mData.get(position).split(",",3);
+        //Now geneData[0] has:
+        //>MEG_1014|Drugs|Aminoglycosides|Aminoglycoside_O-phosphotransferases|APH2-DPRIME
         String[] geneId = geneData[0].split("\\|",5);
+        //Now geneId has 5 string, one for each part divided by a |
         holder.geneId1.setText(String.format("%s. %s", position, geneId[0].substring(1)));
         holder.geneId2.setText(String.format("%s|%s|", geneId[1], geneId[2]));
         holder.geneId3.setText(String.format("%s|%s|", geneId[3], geneId[4]));

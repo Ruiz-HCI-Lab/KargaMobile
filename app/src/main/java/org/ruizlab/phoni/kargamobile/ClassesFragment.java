@@ -34,6 +34,7 @@ public class ClassesFragment extends Fragment implements OnChartValueSelectedLis
     ArrayList<BarEntry> barEntriesArrayList;
     BarData barData;
     BarDataSet barDataSet;
+    Integer classesToShow;
 
     public ClassesFragment() {
         // Required empty public constructor
@@ -49,6 +50,7 @@ public class ClassesFragment extends Fragment implements OnChartValueSelectedLis
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_classes, container, false);
+        classesToShow = ((Global) requireActivity().getApplicationContext()).getClassesToShow();
 
         //Populate class list in graphs
         this.setClassMap();
@@ -102,7 +104,7 @@ public class ClassesFragment extends Fragment implements OnChartValueSelectedLis
             classMap.merge(geneKey, 1, Integer::sum);
         });
 
-        HashMap<String,Integer> sortedClassMap = sortByValues(classMap);
+        HashMap<String,Integer> sortedClassMap = sortByValues(classMap, this.classesToShow);
         xValues.add("");
         AtomicInteger counter = new AtomicInteger();
         sortedClassMap.forEach((x,y)->{
@@ -123,7 +125,8 @@ public class ClassesFragment extends Fragment implements OnChartValueSelectedLis
 
     }
 
-    private static HashMap sortByValues(HashMap<String,Integer> map) {
+    //Sorts the class list by coverage order, and only shows what is defined in the global classesToShow variable.
+    private static HashMap sortByValues(HashMap<String,Integer> map,Integer classesToShow) {
         List list = new LinkedList(map.entrySet());
         Collections.sort(list, new Comparator() {
             public int compare(Object o1, Object o2) {
@@ -135,14 +138,11 @@ public class ClassesFragment extends Fragment implements OnChartValueSelectedLis
 
         HashMap sortedHashMap = new LinkedHashMap();
 
-        //Only show the top 5 elements
-        int counter = 5;
-
         for (Object o : list) {
-           if (counter > 0) {
+           if (classesToShow > 0) {
                Map.Entry entry = (Map.Entry) o;
                sortedHashMap.put(entry.getKey(), entry.getValue());
-               counter --;
+               classesToShow --;
            }
         }
         return sortedHashMap;

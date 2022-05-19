@@ -35,7 +35,7 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity{
 
-    private static final boolean TEST = true;
+    private static final boolean TEST = false;
 
     private static final int PERMISSION_REQUEST_STORAGE = 1000;
     private static final int SOURCE_SEARCH = 1;
@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity{
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_STORAGE);
         }
+
+
 
         Runtime rt = Runtime.getRuntime();
         long maxMemory = rt.maxMemory();
