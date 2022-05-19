@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.zip.GZIPInputStream;
 
 //Class that includes all Anti Microbial Resistant Gene information from the selected reference file
 class AMRGene
@@ -132,20 +133,25 @@ public class Mapper extends Worker{
 
     /*All following methods come from KARGAM. They have been adapted so that they
         work correctly with Android requirements, with some efficiency adjustments. */
-    public void runKarga(Uri sourceFile, Uri dataFile) throws Exception
-    {
+    public void runKarga(Uri sourceFile, Uri dataFile) throws Exception {
         long time0 = System.currentTimeMillis();
         long startTime, endTime, elapsedTime;
         float totalRam, usedRam;
+        boolean sourceIsAGZip = false;
+        String sourceFileName = getFileName(sourceFile);
+        String fileLocation;
+        BufferedReader bufferedReader;
+        InputStream inputStream;
         ArrayList<String> finalGeneList = new ArrayList<>();
         DecimalFormat dfZero = new DecimalFormat("0.00");
+
+        if (sourceFileName.endsWith(".gz")) { sourceIsAGZip=true; }
 
         Random randomNumber = new Random();
         int numT = 25000;
 
-        InputStream inputStream = getApplicationContext().getContentResolver().openInputStream(dataFile);
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
-        String fileLocation;
+        inputStream = getApplicationContext().getContentResolver().openInputStream(dataFile);
+        bufferedReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
 
         int k = ((Global)this.getApplicationContext()).getKValue();
         if (k%2==0) k=k+1; if (k<11) {System.out.println("Minimum value of k must be 11"); k=11;}
@@ -233,12 +239,18 @@ public class Mapper extends Worker{
         inputStream = getApplicationContext().getContentResolver().openInputStream(sourceFile);
 
         System.out.println("Reading file for the 1st time and calculating");
-        bufferedReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
+        if(sourceIsAGZip)
+        {
+            bufferedReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(Objects.requireNonNull(inputStream))));
+        }
+        else
+        {
+            bufferedReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
+        }
 
         i=0;
         double avg=0f;
         String line;
-
 
         while(bufferedReader.readLine() !=null || i<numT)
         {
@@ -288,7 +300,14 @@ public class Mapper extends Worker{
         startTime = System.currentTimeMillis();
 
         inputStream = getApplicationContext().getContentResolver().openInputStream(sourceFile);
-        bufferedReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
+        if(sourceIsAGZip)
+        {
+            bufferedReader = new BufferedReader(new InputStreamReader(new GZIPInputStream(Objects.requireNonNull(inputStream))));
+        }
+        else
+        {
+            bufferedReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(inputStream)));
+        }
 
         i=0;
         while(bufferedReader.readLine() !=null)
@@ -379,7 +398,7 @@ public class Mapper extends Worker{
 
         bufferedReader.close();
 
-        fileLocation = getApplicationContext().getExternalFilesDir(null)+"/"+getFileName(sourceFile)+"_KARGAM_mappedGenes.csv";
+        fileLocation = getApplicationContext().getExternalFilesDir(null)+"/"+sourceFileName+"_KARGAM_mappedGenes.csv";
         System.out.print("File location is: "+fileLocation+"w \r\n");
 
         FileWriter filewriter = new FileWriter(fileLocation);
