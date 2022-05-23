@@ -31,8 +31,8 @@ public class Configurations extends AppCompatActivity {
         npCoverageValue = findViewById(R.id.npCoverageValue);
         Button bBack = findViewById(R.id.bBack);
 
-        npKValue.setMinValue(11);
-        npKValue.setMaxValue(41);
+        npKValue.setMinValue(13);
+        npKValue.setMaxValue(45);
         npKValue.setValue(kValue);
         npKValue.setOnValueChangedListener((numberPicker, i, i1) -> ((Global)this.getApplication()).setKValue(npKValue.getValue()));
 
